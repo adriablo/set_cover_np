@@ -1,0 +1,45 @@
+
+Greedy solution to the (complete) set cover problem, using matrix algebra (numpy)
+
+Goal: find a minimal (cost) solution that completely covers a given set S
+A solution consists of one or more subsets of S, which are also given (candidates)
+
+Note:
+If a complete solution is not feasible (does not exist or cannot be easily found with a greedy aproach):
+a related problem is maximal cover, where we find the largest cover of S (instead of complete cover)
+
+Set S to be covered = {s1, s2, ...}
+Candidate subsets given C = {c, where c is a subset of S} = {c1, c2, ..},
+eg c1 = {s3, s14, s9, ...}, c2 = {s11}, etc
+
+A complete cover solution X = { c[i] such that Union(c[i]) = S }
+
+The implementation uses the matrix representation of a bipartite graph to take advantage of parallel (accelerated) matrix (linear algebra) operations.
+
+The Graph represented consists of:
+* vertices:
+	* partition 1: items in set S = {s1, s2, ...}
+	* partition 2: Candidate subsets (c)
+* edges: e(s,c) = 1 if item s is in subset c; otherwise 0
+
+Example
+Matrix = [Candidate:Item]
+
+            Item (in S)
+            s1	s2 s3  ..
+Candidate   0   1   0
+       c1   0   0   0
+       c2   0   0   1
+       c3   1   1   0
+..
+
+Algorithm: greedy
+
+Iterate: at each step:
+(1) pick the candidate row (c) with maximal cover of S - where the sum over the row M[i,:] is maximal. ie, compute the sum over each row and find the maximum
+(2) add the maximal row (c) found to the solution
+(3) remove the maximal row from M
+(4) repeat until set S is completely covered
+
+Solution X = { c[i] such that vector v has only strictly positive (non-zero) values, where v = sum(c[i]) }
+In other words, each item in S is covered at least once by the candidate rows (c[i]) in the solution X.
